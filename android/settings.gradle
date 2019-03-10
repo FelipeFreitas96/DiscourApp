@@ -1,0 +1,3 @@
+rootProject.name = 'discour2'
+
+include ':app'
