@@ -13,10 +13,6 @@ import NavigatorController from "../controller";
 class SettingsScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      hour: 0,
-      minute: 0
-    };
     NavigatorController.addPage(this);
   }
 
@@ -34,18 +30,19 @@ class SettingsScreen extends React.Component {
   // Open Time Picker
   async openTimePicker() {
     try {
+      const time = NavigatorController.getTime();
       const { action, hour, minute } = await TimePickerAndroid.open({
-        hour: this.state.hour,
-        minute: this.state.minute,
+        hour: time.hour,
+        minute: time.minute,
         is24Hour: true
       });
 
       if (action !== TimePickerAndroid.dismissedAction) {
-        this.setState({ hour, minute });
         NavigatorController.addSettings(
           "classTime",
           hour * 60 * 60 + minute * 60
         );
+        NavigatorController.refresh();
       }
     } catch (err) {
       // error...
@@ -71,7 +68,10 @@ class SettingsScreen extends React.Component {
           <TextSmall>Quantas horas tem cada aula?</TextSmall>
           <QuestionButton onPress={this.openTimePicker.bind(this)}>
             <TextSmall>
-              {this.state.hour}h:{this.state.minute}m
+              {(() => {
+                let time = NavigatorController.getTime();
+                return `${time.hour}h:${time.minute}m`;
+              })()}
             </TextSmall>
           </QuestionButton>
 

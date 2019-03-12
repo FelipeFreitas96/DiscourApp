@@ -13,7 +13,10 @@ import NavigatorController from "../controller";
 class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
+    this.chronoTimerString = "00:00:00";
+    this.chronoButtonString = "Cronometrar";
     NavigatorController.addPage(this);
+    setInterval(() => this.loopEvent(), 1000);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -50,6 +53,38 @@ class HomeScreen extends React.Component {
     AppState.addEventListener("change", this.componentHidden);
   }
 
+  formatDigits(text, digits) {
+    let string = "";
+    for (let i = 0; i < digits; i++) {
+      string += "0";
+    }
+    return (string + "" + text).slice(-digits);
+  }
+
+  loopEvent() {
+    let { hour, minute, second } = NavigatorController.getChronoTime();
+    const { chronoStart } = NavigatorController.settings;
+
+    hour = this.formatDigits(hour, 2);
+    minute = this.formatDigits(hour, 2);
+    second = this.formatDigits(second, 2);
+
+    this.chronoTimerString = `${hour}:${minute}:${second}`;
+    this.chronoButtonString = chronoStart > 0 ? "Pausar" : "Cronometrar";
+    this.forceUpdate();
+  }
+
+  onPressChrono() {
+    const { chronoStart } = NavigatorController.settings;
+    if (chronoStart > 0) {
+      NavigatorController.resetChronoStart();
+      this.chronoButtonString = "Cronometrar";
+    } else {
+      NavigatorController.addChronoStart();
+      this.chronoButtonString = "Pausar";
+    }
+  }
+
   render() {
     return (
       <FlexView>
@@ -60,9 +95,11 @@ class HomeScreen extends React.Component {
             R$ {NavigatorController.getSettings("payment").toFixed(2)}
           </TextBig>
           <TextSmall>Cronometro:</TextSmall>
-          <TextBig>00:00:00</TextBig>
-          <ChronoButton>
-            <TextSmall style={{ color: "white" }}>Cronometrar</TextSmall>
+          <TextBig>{this.chronoTimerString}</TextBig>
+          <ChronoButton onPress={this.onPressChrono.bind(this)}>
+            <TextSmall style={{ color: "white" }}>
+              {this.chronoButtonString}
+            </TextSmall>
           </ChronoButton>
         </FlexCenterView>
       </FlexView>
