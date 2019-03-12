@@ -1,4 +1,5 @@
 import React from "react";
+import { AppState, AsyncStorage } from "react-native";
 import {
   TextSmall,
   TextBig,
@@ -13,6 +14,40 @@ class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     NavigatorController.addPage(this);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async componentHidden(state) {
+    if (state === "background") {
+      try {
+        //// Set settings
+        // Refresh after save
+        NavigatorController.refresh();
+        const string = JSON.stringify(NavigatorController.settings);
+        await AsyncStorage.setItem("Discour@Settings", string);
+      } catch (err) {
+        // error...
+      }
+    }
+  }
+
+  async componentDidMount() {
+    // Load Settings in the first entry
+    try {
+      // Get settings
+      let tmp = await AsyncStorage.getItem("Discour@Settings");
+      tmp = JSON.parse(tmp);
+      if (tmp) {
+        NavigatorController.settings = tmp;
+        NavigatorController.refresh();
+      }
+      // // Change rending if all okay
+      // this.rendering = <DrawerNavigator {...this.props} />;
+      // this.forceUpdate();
+    } catch (err) {
+      // error...
+    }
+    AppState.addEventListener("change", this.componentHidden);
   }
 
   render() {

@@ -1,5 +1,5 @@
 import React from "react";
-import { TimePickerAndroid, TouchableOpacity } from "react-native";
+import { TimePickerAndroid } from "react-native";
 import {
   TextSmall,
   FlexView,
@@ -15,25 +15,23 @@ class SettingsScreen extends React.Component {
     super(props);
     this.state = {
       hour: 0,
-      minute: 0,
-      currentText: "",
-      currentInput: ""
+      minute: 0
     };
     NavigatorController.addPage(this);
   }
 
+  // Inputs Save
   onChangeText(text, setting) {
-    text = text.toString().replace(/[^0-9]/gim, "");
+    text = text.toString().replace(/[^0-9]/g, "");
     text = parseInt(text) || 0;
-    this.setState({ currentText: text, currentInput: setting });
+    NavigatorController.addSettings(setting, text);
   }
 
   onBlur() {
-    const { currentInput, currentText } = this.state;
-    NavigatorController.addSettings(currentInput, currentText);
-    this.setState({ currentText: "", currentInput: "" });
+    NavigatorController.refresh();
   }
 
+  // Open Time Picker
   async openTimePicker() {
     try {
       const { action, hour, minute } = await TimePickerAndroid.open({
@@ -49,8 +47,8 @@ class SettingsScreen extends React.Component {
           hour * 60 * 60 + minute * 60
         );
       }
-    } catch ({ code, message }) {
-      console.warn("Cannot open time picker", message);
+    } catch (err) {
+      // error...
     }
   }
 

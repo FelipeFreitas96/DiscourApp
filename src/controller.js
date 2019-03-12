@@ -25,7 +25,6 @@ class NavigatorController {
       if (value <= 0) return;
     }
     this.settings[name] = value;
-    this.refresh();
   }
 
   getSettings(name) {
