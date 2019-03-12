@@ -1,16 +1,21 @@
 import styled from "styled-components";
 
 const TextSmall = styled.Text`
-  font-size: 30;
+  font-size: 20;
 `;
 
 const TextBig = styled.Text`
-  font-size: 60;
+  font-size: 50;
   font-weight: bold;
 `;
 
 const FlexView = styled.View`
   flex: 1;
+`;
+
+const RowView = styled.View`
+  flex: 1;
+  flex-direction: row;
 `;
 
 const FlexCenterView = styled.View`
@@ -29,8 +34,19 @@ const ChronoButton = styled.TouchableOpacity`
 
 const QuestionInput = styled.TextInput`
   width: 100%;
-  padding-left: 0;
-  padding-right: 0;
+  height: 30;
+  padding: 0;
+  background-color: #f0f0f0;
+  text-align: center;
+  font-size: 20;
+  color: gray;
+`;
+
+const QuestionButton = styled.TouchableOpacity`
+  align-items: center;
+  width: 100%;
+  height: 30;
+  padding: 0;
   background-color: #f0f0f0;
 `;
 
@@ -38,7 +54,9 @@ export {
   TextSmall,
   TextBig,
   FlexView,
+  RowView,
   FlexCenterView,
   ChronoButton,
-  QuestionInput
+  QuestionInput,
+  QuestionButton
 };
