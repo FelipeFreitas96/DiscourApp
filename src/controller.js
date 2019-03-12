@@ -1,3 +1,5 @@
+import { AsyncStorage } from "react-native";
+
 class NavigatorController {
   constructor() {
     this.pages = [];
@@ -31,6 +33,20 @@ class NavigatorController {
 
   getSettings(name) {
     return this.settings[name] || 0;
+  }
+
+  async saveSettings() {
+    try {
+      //// Set settings
+      // Refresh after save
+      this.refresh();
+      await AsyncStorage.setItem(
+        "Discour@Settings",
+        JSON.stringify(this.settings)
+      );
+    } catch (err) {
+      // error...
+    }
   }
 
   // Class Time

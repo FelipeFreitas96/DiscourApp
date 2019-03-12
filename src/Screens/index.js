@@ -15,22 +15,18 @@ class HomeScreen extends React.Component {
     super(props);
     this.chronoTimerString = "00:00:00";
     this.chronoButtonString = "Cronometrar";
+    this.interval = setInterval(() => this.loopEvent(), 1000);
+
     NavigatorController.addPage(this);
-    setInterval(() => this.loopEvent(), 1000);
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  async componentHidden(state) {
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  componentHidden(state) {
     if (state === "background") {
-      try {
-        //// Set settings
-        // Refresh after save
-        NavigatorController.refresh();
-        const string = JSON.stringify(NavigatorController.settings);
-        await AsyncStorage.setItem("Discour@Settings", string);
-      } catch (err) {
-        // error...
-      }
+      NavigatorController.saveSettings();
     }
   }
 
@@ -83,6 +79,7 @@ class HomeScreen extends React.Component {
       NavigatorController.addChronoStart();
       this.chronoButtonString = "Pausar";
     }
+    NavigatorController.saveSettings();
   }
 
   render() {
