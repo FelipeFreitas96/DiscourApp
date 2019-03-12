@@ -5,6 +5,6 @@
 
 import { AppRegistry } from "react-native";
 import { name as appName } from "./app.json";
-import DrawerNavigator from "./src/DrawerNavigator";
+import App from "./src";
 
-AppRegistry.registerComponent(appName, () => DrawerNavigator);
+AppRegistry.registerComponent(appName, () => App);

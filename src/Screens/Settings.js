@@ -1,12 +1,18 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { TextInput } from "react-native";
+import { TextSmall, FlexView, FlexCenterView, QuestionInput } from "../styles";
+import Header from "../header";
 
 class SettingsScreen extends React.Component {
   render() {
     return (
-      <View>
-        <Text>Hello World, Settings!</Text>
-      </View>
+      <FlexView>
+        <Header {...this.props} />
+        <FlexCenterView>
+          <TextSmall>Quanto você paga de mensalidade?</TextSmall>
+          <QuestionInput />
+        </FlexCenterView>
+      </FlexView>
     );
   }
 }
