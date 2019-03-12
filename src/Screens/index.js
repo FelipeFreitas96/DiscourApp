@@ -49,21 +49,13 @@ class HomeScreen extends React.Component {
     AppState.addEventListener("change", this.componentHidden);
   }
 
-  formatDigits(text, digits) {
-    let string = "";
-    for (let i = 0; i < digits; i++) {
-      string += "0";
-    }
-    return (string + "" + text).slice(-digits);
-  }
-
   loopEvent() {
     let { hour, minute, second } = NavigatorController.getChronoTime();
     const { chronoStart } = NavigatorController.settings;
 
-    hour = this.formatDigits(hour, 2);
-    minute = this.formatDigits(hour, 2);
-    second = this.formatDigits(second, 2);
+    hour = ("0" + hour).slice(-2);
+    minute = ("0" + minute).slice(-2);
+    second = ("0" + second).slice(-2);
 
     this.chronoTimerString = `${hour}:${minute}:${second}`;
     this.chronoButtonString = chronoStart > 0 ? "Pausar" : "Cronometrar";
