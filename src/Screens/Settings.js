@@ -17,13 +17,17 @@ class SettingsScreen extends React.Component {
   }
 
   // Inputs Save
-  onChangeText(text, setting) {
+  onChangeText(text, setting, min) {
     text = text.toString().replace(/[^0-9]/g, "");
     text = parseInt(text) || 0;
-    NavigatorController.addSettings(setting, text);
+
+    if (text >= (min || 0)) {
+      NavigatorController.addSettings(setting, text);
+    }
   }
 
   onBlur() {
+    NavigatorController.saveSettings();
     NavigatorController.refresh();
   }
 
@@ -75,9 +79,21 @@ class SettingsScreen extends React.Component {
             </TextSmall>
           </QuestionButton>
 
+          <TextSmall>Qual a quantidade máxima de aulas por dia?</TextSmall>
+          <QuestionInput
+            keyboardType="numeric"
+            onChangeText={text => this.onChangeText(text, "classLimit", 1)}
+            onBlur={() => {
+              this.onBlur("classLimit");
+            }}
+          >
+            {NavigatorController.getSettings("classLimit")}
+          </QuestionInput>
+
           <TextSmall>Quantas aulas vagas na semana?</TextSmall>
           <QuestionInput
             keyboardType="numeric"
+            onChangeText={text => this.onChangeText(text, "classFree")}
             onBlur={() => {
               this.onBlur("classFree");
             }}

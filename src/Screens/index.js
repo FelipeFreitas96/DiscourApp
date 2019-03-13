@@ -5,7 +5,8 @@ import {
   TextBig,
   FlexView,
   FlexCenterView,
-  ChronoButton
+  ChronoButton,
+  TextMini
 } from "../styles";
 import Header from "../header";
 import NavigatorController from "../controller";
@@ -15,6 +16,7 @@ class HomeScreen extends React.Component {
     super(props);
     this.chronoTimerString = "00:00:00";
     this.chronoButtonString = "Cronometrar";
+    this.chronoColor = "gray";
     this.interval = setInterval(() => this.loopEvent(), 1000);
 
     NavigatorController.addPage(this);
@@ -37,7 +39,9 @@ class HomeScreen extends React.Component {
       let tmp = await AsyncStorage.getItem("Discour@Settings");
       tmp = JSON.parse(tmp);
       if (tmp) {
-        NavigatorController.settings = tmp;
+        for (let [name, value] of Object.entries(tmp)) {
+          NavigatorController.settings[name] = value;
+        }
         NavigatorController.refresh();
       }
       // // Change rending if all okay
@@ -49,9 +53,32 @@ class HomeScreen extends React.Component {
     AppState.addEventListener("change", this.componentHidden);
   }
 
+  startEvent() {
+    NavigatorController.addChronoStart();
+    this.chronoButtonString = "Pausar";
+    NavigatorController.saveSettings();
+  }
+
+  pauseEvent() {
+    NavigatorController.resetChronoStart();
+    this.chronoButtonString = "Cronometrar";
+    NavigatorController.saveSettings();
+  }
+
   loopEvent() {
     let { hour, minute, second } = NavigatorController.getChronoTime();
-    const { chronoStart } = NavigatorController.settings;
+    const { chronoStart, classTime } = NavigatorController.settings;
+
+    if (chronoStart > 0) {
+      const startTime = new Date().getTime() - chronoStart;
+      if (startTime >= classTime * 1000) {
+        this.pauseEvent();
+      }
+    }
+
+    if (hour > 0 || minute > 0 || second > 0) {
+      this.chronoColor = "green";
+    }
 
     hour = ("0" + hour).slice(-2);
     minute = ("0" + minute).slice(-2);
@@ -65,13 +92,10 @@ class HomeScreen extends React.Component {
   onPressChrono() {
     const { chronoStart } = NavigatorController.settings;
     if (chronoStart > 0) {
-      NavigatorController.resetChronoStart();
-      this.chronoButtonString = "Cronometrar";
+      this.pauseEvent();
     } else {
-      NavigatorController.addChronoStart();
-      this.chronoButtonString = "Pausar";
+      this.startEvent();
     }
-    NavigatorController.saveSettings();
   }
 
   render() {
@@ -79,9 +103,15 @@ class HomeScreen extends React.Component {
       <FlexView>
         <Header {...this.props} />
         <FlexCenterView>
-          <TextSmall>Mensalidade</TextSmall>
+          <TextSmall>Mensalidade:</TextSmall>
+          <TextMini>
+            R$ {NavigatorController.settings.payment.toFixed(2)}
+          </TextMini>
+          <TextMini style={{ color: this.chronoColor }}>
+            - R$ {NavigatorController.getChronoDiscount().toFixed(2)}
+          </TextMini>
           <TextBig>
-            R$ {NavigatorController.getSettings("payment").toFixed(2)}
+            R$ {NavigatorController.getChronoPayment().toFixed(2)}
           </TextBig>
           <TextSmall>Cronometro:</TextSmall>
           <TextBig>{this.chronoTimerString}</TextBig>

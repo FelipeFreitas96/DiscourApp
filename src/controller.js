@@ -7,6 +7,7 @@ class NavigatorController {
       payment: 600,
       classTime: 0,
       classFree: 0,
+      classLimit: 1,
       chronoStart: 0,
       chronoTotal: 0
     };
@@ -24,11 +25,7 @@ class NavigatorController {
   }
 
   addSettings(name, value) {
-    if (name == "payment") {
-      value = parseInt(value);
-      if (value <= 0) return;
-    }
-    this.settings[name] = value;
+    this.settings[name] = parseInt(value);
   }
 
   getSettings(name) {
@@ -57,6 +54,11 @@ class NavigatorController {
     return { hour, minute };
   }
 
+  getTotalTime() {
+    const { hour, minute } = this.getTime();
+    return hour * 60 * 60 + minute * 60;
+  }
+
   // Chrono Time
   getChronoTotalTime() {
     const date = this.settings.chronoStart || 0;
@@ -71,9 +73,29 @@ class NavigatorController {
   getChronoTime() {
     const date = this.getChronoTotalTime();
     const second = Math.floor(date / 1000) % 60;
-    const minute = Math.floor(date / 1000 / 60);
+    const minute = Math.floor(date / 1000 / 60) % 60;
     const hour = Math.floor(date / 1000 / 60 / 60);
     return { second, minute, hour };
+  }
+
+  getChronoDiscount() {
+    return Math.max(0, this.settings.payment - this.getChronoPayment());
+  }
+
+  getChronoPayment() {
+    let time = this.getChronoTotalTime();
+    time = time / 1000;
+
+    // Qnt.Aulas * DuraçãoAula * DiasSemana * SemenasMeses
+    // Resultado: Quantidade de tempo por mês.
+
+    let totalAulas = this.settings.classLimit * 7 * 4;
+    totalAulas -= this.settings.classFree * 4;
+
+    let totalClass = this.settings.classTime * totalAulas;
+    let formula = (this.settings.payment * (totalClass - time)) / totalClass;
+
+    return formula > 0 ? formula : 0;
   }
 
   resetChronoStart() {

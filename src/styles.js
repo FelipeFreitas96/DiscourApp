@@ -4,6 +4,10 @@ const TextSmall = styled.Text`
   font-size: 20;
 `;
 
+const TextMini = styled.Text`
+  font-size: 15;
+`;
+
 const TextBig = styled.Text`
   font-size: 50;
   font-weight: bold;
@@ -53,6 +57,7 @@ const QuestionButton = styled.TouchableOpacity`
 export {
   TextSmall,
   TextBig,
+  TextMini,
   FlexView,
   RowView,
   FlexCenterView,
